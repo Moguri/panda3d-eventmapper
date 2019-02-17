@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/Moguri/panda3d-eventmapper.svg?branch=master)](https://travis-ci.org/Moguri/panda3d-eventmapper)
-[![Package Versions](https://img.shields.io/pypi/pyversions/panda3d_panda3d-eventmapper.svg)](https://pypi.org/project/panda3d_panda3d-eventmapper/)
+[![Package Versions](https://img.shields.io/pypi/pyversions/panda3d-eventmapper.svg)](https://pypi.org/project/panda3d-eventmapper/)
 [![Panda3D Versions](https://img.shields.io/badge/panda3d-1.9%2C%201.10-blue.svg)](https://www.panda3d.org/)
 [![License](https://img.shields.io/github/license/Moguri/panda3d-eventmapper.svg)](https://choosealicense.com/licenses/bsd-3-clause/)
 
