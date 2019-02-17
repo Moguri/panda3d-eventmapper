@@ -1,0 +1,30 @@
+language: python
+sudo: required
+dist: xenial
+python:
+  - '3.6'
+  - '3.7'
+script: python setup.py test
+before_deploy: python setup.py sdist bdist_wheel
+deploy:
+  - provider: pypi
+    skip_cleanup: true
+    skip_existing: true
+    on:
+      tags: true
+      repo: Moguri/pman
+      python: '3.7'
+    user: Moguri
+    password:
+        secure: hsCvYmk03IoBdYEISOkgL5vb4We4RpV+Ju6sEmLtH9BeZ0Loe0oRqoE/WcuKP53iv/VYTyKrQFsLSigG2QgNjxnYfRp4hITGpfjdkXrsvYecZrRKiQ7SHSdc8tzxJ0/hHApVHYZ83aG4Y2dcqonO9Axkn7Y+SlpLdRT66UM40MPv/zqsR1NqPIGLNYtICzV/7j8/w43SpxvP9L5AbSXmHjwoDROKF54S0ArN4azt8vCe7V9hSOtvMpMtlVaA8jDzT5LRG1vzN32ivJ9nt15075HA82WI/D1o9JfBWXHx5CyDrl6kqaoWzauJTlExFONurrwntkVn5UqpZxUV+ZAE5WfCrOt759Eg0KQqrtBT62n6OqncIyp0ftQGy1077K2ZZjX/Ef13pjNIB7w8il0mBuGD8zx8U6r73zZ55SGvtySrsbMuJipW4FLl56k/ow/OrUv4cXPq1sO39RF9zbjtQnBGsU+2AnME94J0I6dTKLAh3WDm+XFnxeDm1UYLMyQh6RUqayESjMYzrP4T2g5D4cwX9yMka+62t/W6NwYDzcA1rdPEwsl16J8S7bUjRtaeHS5+b9Xzjq5fXCiMs7Q7vwpGiKDu1TLpsBwj/cQMuoU4nlHpzNWPheynZYeG13G6dlqK5A139S86oYQcrrDt2e5D4SNdjuKJvckadC0nO/A=
+    distributions: sdist bdist_wheel
+  - provider: releases
+    on:
+        tags: true
+        repo: Moguri/pman
+        python: '3.7'
+    skip_cleanup: true
+    api_key:
+        secure: nvx6yaoTumJgcOYtnqBS2gChY8Dtap4oWfEZ5BDAP3GAHN1EmKajwkv1ElhIfvKMG8O9p2g4Lb/tLzx8ZPoEbneGc7LT+/KMGM4+iITEYnbvSezLd1FTmRmuCh1FahVAXPIPD7vqJeZvGYXEoILZ1x4nmSx6lu7BsSKGJJcM4rnK5mowoFu0Ywyxtk3de3b44pQv5yBFfiIDItexY+z6tRmU0Hkm2AYY6+AENsPu+klfSDQcVLbWQyZBKl9nB54ptWYvMuMq8ugT1mlWlj2A4IvQUkiA1+TF8WYNjw7+4m1zeOMRtgZff3vkcilsXucEJYr5MXLPolj7eSbs5NA7nR3CDOCtQwg6veI6iKifjTkZMCJG3Qv+ncI9wWgXmAK5+mF2zJ5onNbG2Erm/xsQ0U6TSOUGIDGZHtHZ1LmEOWWzWe/5xliv8EUdc4FilpdrcIzloJcj7WooyBh75crZm9hyhs9GEHBqaOkWkbJRdntTwCYhY0Eo+GgIpat8oN7fouEWB5/FuhVnXt7geROW9zFePXQ9Qc677v2QY5A93vURLk7AmIWTsVAv0buiqz7WMsvFVj0q5TjwEzp6tKe2XV+MRqBpthyoqDWM+n42hfdE78iGmYedTcm6x6Y3WYvyzqyNkJHXg/dKfgzCQWvnUYdwCrBp2xke5OdOY9PQgDY=
+    file_glob: true
+    file: dist/*
