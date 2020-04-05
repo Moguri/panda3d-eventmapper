@@ -1,6 +1,7 @@
 # pylint: disable=import-outside-toplevel
-import panda3d.core as p3d
 import pytest
+
+import panda3d.core as p3d
 
 
 import eventmapper

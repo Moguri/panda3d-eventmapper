@@ -6,7 +6,7 @@ def readme():
 
 setup(
     name='panda3d-eventmapper',
-    version='0.1.0',
+    version='0.2.0',
     description='Simple utility to remap Panda3D events',
     long_description=readme(),
     long_description_content_type='text/markdown',
@@ -16,6 +16,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
     keywords='panda3d gamedev',
     url='https://github.com/Moguri/panda3d-eventmapper',
