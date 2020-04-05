@@ -1,8 +1,16 @@
+# pylint: disable=import-outside-toplevel
 import panda3d.core as p3d
+import pytest
 
 
 import eventmapper
 
+
+@pytest.fixture(autouse=True, scope='session')
+def showbase():
+    from direct.showbase.ShowBase import ShowBase
+    p3d.load_prc_file_data('', 'window-type none')
+    return ShowBase()
 
 def test_prc():
     p3d.load_prc_file_data(
@@ -10,7 +18,7 @@ def test_prc():
         'event-map-item-jump space raw-y gamepad0-face_a\n'
     )
 
-    emapper = eventmapper.EventMapper()
+    emapper = eventmapper.EventMapper(manage_gamepads=False)
 
     assert emapper.get_inputs_for_event('jump') == [
         'space',
@@ -23,7 +31,7 @@ def test_prc():
     ]
 
 def test_add_alias():
-    emapper = eventmapper.EventMapper()
+    emapper = eventmapper.EventMapper(manage_gamepads=False)
 
     emapper.add_alias('space', 'jump')
     emapper.add_alias('raw-y', 'jump')
@@ -40,7 +48,7 @@ def test_add_alias():
     ]
 
 def test_clear_aliases():
-    emapper = eventmapper.EventMapper()
+    emapper = eventmapper.EventMapper(manage_gamepads=False)
 
     emapper.add_alias('space', 'jump')
 

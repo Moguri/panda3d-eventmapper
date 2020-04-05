@@ -1,16 +1,16 @@
 import pprint
 
 from direct.showbase.DirectObject import DirectObject
-from direct.directnotify.DirectNotify import DirectNotify
+from direct.directnotify.DirectNotifyGlobal import directNotify
 from direct.showbase.MessengerGlobal import messenger
 import panda3d.core as p3d
 
 
 class EventMapper(DirectObject):
-    notify = DirectNotify().newCategory("EventMapper")
+    notify = directNotify.newCategory("EventMapper")
     event_map_item_prefix = "event-map-item-"
 
-    def __init__(self):
+    def __init__(self, manage_gamepads=True):
         super().__init__()
 
         self.gamepad_label_map = {
@@ -30,9 +30,33 @@ class EventMapper(DirectObject):
             'b': '○',
         }
 
+        # Setup gamepadds
+        self._gamepads = []
+        if manage_gamepads:
+            for dev in base.devices.get_devices(p3d.InputDevice.DeviceClass.gamepad):
+                self._device_connected(dev)
+
         # Setup input map
         self.input_map = {}
         self.reload_config()
+
+    def _device_connected(self, device):
+        add_device = (
+            device.device_class == p3d.InputDevice.DeviceClass.gamepad and
+            device not in self._gamepads
+        )
+        if add_device:
+            self.notify.info('Detected {}'.format(device))
+            gpidx = len(self._gamepads)
+            self._gamepads.append(device)
+            base.attach_input_device(device, 'gamepad'+str(gpidx))
+
+    def _device_disconnected(self, device):
+        if device in self._gamepads:
+            self.notify.info('Disconnected {}'.format(device))
+            self._gamepads.remove(device)
+            base.detach_input_device(device)
+
 
     def clear_aliases(self):
         self.input_map = {}
@@ -109,17 +133,18 @@ class EventMapper(DirectObject):
         inputs = self.get_inputs_for_event(event)
         keymap = base.win.get_keyboard_map() if 'base' in globals() else None
 
-        gamepad_device = None
-        if hasattr(p3d, 'InputDeviceManager'):
-            devicemgr = p3d.InputDeviceManager.get_global_ptr()
-            devices = devicemgr.get_devices(p3d.InputDevice.DeviceClass.gamepad)
-
-            gpidx = [
-                int(i.split('-')[0].replace('gamepad', ''))
-                for i in inputs
-                if i.startswith('gamepad')
-            ]
-            gamepad_device = devices[gpidx[0]] if gpidx and gpidx[0] < len(devices) else None
+        gpidx = [
+            int(i.split('-')[0].replace('gamepad', ''))
+            for i in inputs
+            if i.startswith('gamepad')
+        ]
+        if gpidx and gpidx[0] < len(self._gamepads):
+            gamepad_device = self._gamepads[gpidx[0]]
+        elif self._gamepads:
+            gamepad_device = self._gamepads[0]
+        else:
+            gamepad_device = None
+        print(gamepad_device)
 
         if default is not None:
             inputs.append(default)
@@ -127,7 +152,6 @@ class EventMapper(DirectObject):
             lambda x: x.startswith('gamepad') == bool(gamepad_device is not None),
             inputs
         )
-
 
         retval = []
         for inp in inputs:
