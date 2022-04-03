@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Moguri/panda3d-eventmapper.svg?branch=master)](https://travis-ci.org/Moguri/panda3d-eventmapper)
+![Build Status](https://github.com/Moguri/panda3d-simplepbr/workflows/Pipeline/badge.svg)
 [![Package Versions](https://img.shields.io/pypi/pyversions/panda3d-eventmapper.svg)](https://pypi.org/project/panda3d-eventmapper/)
 [![Panda3D Versions](https://img.shields.io/badge/panda3d-1.9%2C%201.10-blue.svg)](https://www.panda3d.org/)
 [![License](https://img.shields.io/github/license/Moguri/panda3d-eventmapper.svg)](https://choosealicense.com/licenses/bsd-3-clause/)
@@ -53,6 +53,34 @@ class GameApp(ShowBase):
         self.accept('move-right', print, ['move right'])
 
 GameApp().run()
+```
+
+## Running Tests
+
+First install `panda3d-simplepbr` in editable mode along with `test` extras:
+
+```bash
+pip install -e .[test]
+```
+
+Then run the test suite with `pytest`:
+
+```bash
+pytest
+```
+
+## Building Wheels
+
+Install `build`:
+
+```bash
+pip install --upgrade build
+```
+
+and run:
+
+```bash
+python -m build
 ```
 
 ## License
