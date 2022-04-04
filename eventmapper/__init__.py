@@ -50,12 +50,13 @@ class EventMapper(DirectObject):
                 state = gamepad.findAxis(axis)
                 if state and abs(state.value) > self.gamepad_deadzone:
                     axisname = str(axis).lower().replace('.', '_')
-                    eventname = f'gamepad{gpidx}-{axisname}'
+                    event = f'gamepad{gpidx}-{axisname}'
 
+                    messenger.send(event, [state.value])
                     if state.value > 0:
-                        event = f'{eventname}-pos'
+                        event = f'{event}-pos'
                     else:
-                        event = f'{eventname}-neg'
+                        event = f'{event}-neg'
                     newevents.append(event)
                     if event not in self._prev_gamepad_events:
                         messenger.send(event)
@@ -129,10 +130,10 @@ class EventMapper(DirectObject):
             self.accept(trigger + '-up', self.send, [events, '-up'])
             self.accept(trigger + '-repeat', self.send, [events, '-repeat'])
 
-    def send(self, events, suffix):
+    def send(self, events, suffix, *args):
         for i in events:
             self.notify.debug("throwing {}".format(i+suffix))
-            messenger.send(i + suffix)
+            messenger.send(i + suffix, list(args))
 
     def get_inputs_for_event(self, event):
         return [key for key, value in self.input_map.items() if event in value]
