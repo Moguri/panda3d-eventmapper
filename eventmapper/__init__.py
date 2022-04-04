@@ -31,14 +31,42 @@ class EventMapper(DirectObject):
         }
 
         # Setup gamepadds
+        self.gamepad_deadzone = 0.25
         self._gamepads = []
+        self._prev_gamepad_events = []
         if manage_gamepads:
             for dev in base.devices.get_devices(p3d.InputDevice.DeviceClass.gamepad):
                 self._device_connected(dev)
+            base.task_mgr.add(self._update, 'eventmapper update')
 
         # Setup input map
         self.input_map = {}
         self.reload_config()
+
+    def _update(self, task):
+        newevents = []
+        for gpidx, gamepad in enumerate(self._gamepads):
+            for axis in p3d.InputDevice.Axis:
+                state = gamepad.findAxis(axis)
+                if state and abs(state.value) > self.gamepad_deadzone:
+                    axisname = str(axis).lower().replace('.', '_')
+                    eventname = f'gamepad{gpidx}-{axisname}'
+
+                    if state.value > 0:
+                        event = f'{eventname}-pos'
+                    else:
+                        event = f'{eventname}-neg'
+                    newevents.append(event)
+                    if event not in self._prev_gamepad_events:
+                        messenger.send(event)
+                    else:
+                        messenger.send(f'{event}-repeat')
+
+        for prevevent in self._prev_gamepad_events:
+            if prevevent not in newevents:
+                messenger.send(f'{prevevent}-up')
+        self._prev_gamepad_events = newevents
+        return task.cont
 
     def _device_connected(self, device):
         add_device = (
@@ -56,7 +84,6 @@ class EventMapper(DirectObject):
             self.notify.info('Disconnected {}'.format(device))
             self._gamepads.remove(device)
             base.detach_input_device(device)
-
 
     def clear_aliases(self):
         self.input_map = {}
